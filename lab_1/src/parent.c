@@ -8,7 +8,7 @@
 int main(int argc, char *argv[]) {
     char filename[1024];
     
-    // Çàïðîñ èìåíè ôàéëà ó ïîëüçîâàòåëÿ
+    // Ð—Ð°Ð¿Ñ€Ð¾Ñ Ð¸Ð¼ÐµÐ½Ð¸ Ñ„Ð°Ð¹Ð»Ð° Ñƒ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
     {
         const char msg[] = "Enter output filename: ";
         write(STDOUT_FILENO, msg, sizeof(msg) - 1);
@@ -19,12 +19,12 @@ int main(int argc, char *argv[]) {
             write(STDERR_FILENO, msg, sizeof(msg) - 1);
             exit(EXIT_FAILURE);
         }
-        filename[n - 1] = '\0'; // Óäàëÿåì ñèìâîë íîâîé ñòðîêè
+        filename[n - 1] = '\0'; // Ð£Ð´Ð°Ð»ÐµÐ½Ð¸Ðµ ÑÐ¸Ð¼Ð²Ð¾Ð»Ð° Ð½Ð¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸
     }
 
-    // Ñîçäàíèå êàíàëîâ äëÿ ìåæïðîöåññíîãî âçàèìîäåéñòâèÿ
-    int parent_to_child[2];  // pipe1 - äëÿ ïåðåäà÷è êîìàíä îò ðîäèòåëÿ ê ðåáåíêó
-    int child_to_parent[2];  // pipe2 - äëÿ ïåðåäà÷è ñòàòóñà îò ðåáåíêà ê ðîäèòåëþ
+    // Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ ÐºÐ°Ð½Ð°Ð»Ð¾Ð² Ð´Ð»Ñ Ð¼ÐµÐ¶Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ½Ð¾Ð³Ð¾ Ð²Ð·Ð°Ð¸Ð¼Ð¾Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ
+    int parent_to_child[2];  // pipe1 - Ð¿ÐµÑ€ÐµÐ´Ð°Ñ‡Ð° ÐºÐ¾Ð¼Ð°Ð½Ð´ Ð¾Ñ‚ Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»Ñ Ðº Ñ€ÐµÐ±ÐµÐ½ÐºÑƒ
+    int child_to_parent[2];  // pipe2 - Ð¿ÐµÑ€ÐµÐ´Ð°Ñ‡Ð° ÑÑ‚Ð°Ñ‚ÑƒÑÐ° Ð¾Ñ‚ Ñ€ÐµÐ±ÐµÐ½ÐºÐ° Ñ€Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÑŽ
 
     if (pipe(parent_to_child) == -1) {
         const char msg[] = "Error: cannot create pipe1\n";
@@ -38,42 +38,41 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Ñîçäàíèå äî÷åðíåãî ïðîöåññà
+    // Ð¡Ð¾Ð·Ð´Ð°Ð½Ð¸Ðµ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
     pid_t pid = fork();
 
     switch(pid) {
         case -1: {
-            // Îøèáêà ñîçäàíèÿ ïðîöåññà
+            // ÐžÑˆÐ¸Ð±ÐºÐ° ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ñ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
             const char msg[] = "Error: cannot create child process\n";
             write(STDERR_FILENO, msg, sizeof(msg) - 1);
             exit(EXIT_FAILURE);
         }
         case 0: {
-            // Äî÷åðíèé ïðîöåññ
-            close(parent_to_child[1]);  // Çàêðûâàåì çàïèñü â pipe1
-            close(child_to_parent[0]);  // Çàêðûâàåì ÷òåíèå èç pipe2
+            // Ð”Ð¾Ñ‡ÐµÑ€Ð½Ð¸Ð¹ Ð¿Ñ€Ð¾Ñ†ÐµÑÑ
+            close(parent_to_child[1]);
+            close(child_to_parent[0]);
 
-            // Ïåðåíàïðàâëÿåì ñòàíäàðòíûé ââîä íà ÷òåíèå èç pipe1
+            // ÐŸÐµÑ€ÐµÐ½Ð°Ð¿Ñ€Ð°Ð²Ð»ÑÐµÐ¼ ÑÑ‚Ð°Ð½Ð´Ð°Ñ€Ñ‚Ð½Ñ‹Ð¹ Ð²Ð²Ð¾Ð´ Ð½Ð° Ñ‡Ñ‚ÐµÐ½Ð¸Ðµ Ð¸Ð· pipe1
             dup2(parent_to_child[0], STDIN_FILENO);
             close(parent_to_child[0]);
 
-            // Ïåðåíàïðàâëÿåì ñòàíäàðòíûé âûâîä îøèáîê íà çàïèñü â pipe2
+            // ÐŸÐµÑ€ÐµÐ½Ð°Ð¿Ñ€Ð°Ð²Ð»ÑÐµÐ¼ ÑÑ‚Ð°Ð½Ð´Ð°Ñ€Ñ‚Ð½Ñ‹Ð¹ Ð²Ñ‹Ð²Ð¾Ð´ Ð¾ÑˆÐ¸Ð±Ð¾Ðº Ð½Ð° Ð·Ð°Ð¿Ð¸ÑÑŒ Ð² pipe2
             dup2(child_to_parent[1], STDERR_FILENO);
             close(child_to_parent[1]);
 
-            // Çàïóñêàåì ïðîãðàììó äî÷åðíåãî ïðîöåññà ñ ïåðåäà÷åé èìåíè ôàéëà
+            // Ð—Ð°Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ð¿Ñ€Ð¾Ð³Ñ€Ð°Ð¼Ð¼Ñƒ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ° Ñ Ð¿ÐµÑ€ÐµÐ´Ð°Ñ‡ÐµÐ¹ Ð¸Ð¼ÐµÐ½Ð¸ Ñ„Ð°Ð¹Ð»Ð°
             execl("./child", "child", filename, NULL);
             
-            // Åñëè execl âåðíóë óïðàâëåíèå - ïðîèçîøëà îøèáêà
+            // ÐŸÑ€Ð¸ Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‚Ðµ execl ÑƒÐ¿Ñ€Ð°Ð²Ð»ÐµÐ½Ð¸Ñ Ð¼Ñ‹ Ð¿Ð¾Ð½Ð¸Ð¼Ð°ÐµÐ¼, Ñ‡Ñ‚Ð¾ Ð¿Ñ€Ð¾Ð¸Ð·Ð¾ÑˆÐ»Ð° Ð¾ÑˆÐ¸Ð±ÐºÐ°
             const char msg[] = "Error: cannot execute child process\n";
             write(STDERR_FILENO, msg, sizeof(msg) - 1);
             exit(EXIT_FAILURE);
         }
         default: {
-            // Ðîäèòåëüñêèé ïðîöåññ
-            close(parent_to_child[0]);  // Çàêðûâàåì ÷òåíèå èç pipe1
-            close(child_to_parent[1]);  // Çàêðûâàåì çàïèñü â pipe2
-
+            // Ð Ð¾Ð´Ð¸Ñ‚ÐµÐ»ÑŒÑÐºÐ¸Ð¹ Ð¿Ñ€Ð¾Ñ†ÐµÑÑ
+            close(parent_to_child[0]);
+            close(child_to_parent[1]);
             const char prompt[] = "Enter numbers separated by spaces (or 'exit' to quit):\n";
             write(STDOUT_FILENO, prompt, sizeof(prompt) - 1);
 
@@ -81,33 +80,33 @@ int main(int argc, char *argv[]) {
             int child_alive = 1;
 
             while (child_alive) {
-                // ×òåíèå êîìàíäû îò ïîëüçîâàòåëÿ
+                // Ð§Ñ‚ÐµÐ½Ð¸Ðµ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ Ð¾Ñ‚ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»Ñ
                 const char input_prompt[] = "> ";
                 write(STDOUT_FILENO, input_prompt, sizeof(input_prompt) - 1);
 
                 ssize_t n = read(STDIN_FILENO, buffer, sizeof(buffer) - 1);
                 if (n <= 0) break;
 
-                buffer[n - 1] = '\0'; // Óäàëÿåì ñèìâîë íîâîé ñòðîêè
+                buffer[n - 1] = '\0'; // Ð£Ð´Ð°Ð»ÑÐµÐ¼ ÑÐ¸Ð¼Ð²Ð¾Ð» Ð½Ð¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸
 
-                // Ïðîâåðêà íà êîìàíäó âûõîäà
+                // ÐŸÑ€Ð¾Ð²ÐµÑ€ÐºÐ° Ð½Ð° ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ Ð²Ñ…Ð¾Ð´Ð°
                 if (strcmp(buffer, "exit") == 0) {
                     break;
                 }
 
-                // Ïðîâåðêà íà ïóñòîé ââîä
+                // ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð¿ÑƒÑÑ‚Ð¾Ð¹ Ð²Ñ…Ð¾Ð´
                 if (strlen(buffer) == 0) {
                     continue;
                 }
 
-                // Äîáàâëÿåì ñèìâîë íîâîé ñòðîêè äëÿ êîððåêòíîé îáðàáîòêè
+                // Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ ÑÐ¸Ð¼Ð²Ð¾Ð» Ð½Ð¾Ð²Ð¾Ð¹ ÑÑ‚Ñ€Ð¾ÐºÐ¸ Ð´Ð»Ñ Ð¿Ñ€Ð°Ð²Ð¸Ð»ÑŒÐ½Ð¾Ð¹ Ð¾Ð±Ñ€Ð°Ð±Ð¾Ñ‚ÐºÐ¸
                 buffer[n - 1] = '\n';
                 buffer[n] = '\0';
 
-                // Îòïðàâêà êîìàíäû äî÷åðíåìó ïðîöåññó ÷åðåç pipe1
+                // Ð¾Ñ‚Ð¿Ñ€Ð°Ð²ÐºÐ° ÐºÐ¾Ð¼Ð°Ð½Ð´Ñ‹ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ¼Ñƒ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÑƒ Ñ‡ÐµÑ€ÐµÐ· pipe1
                 write(parent_to_child[1], buffer, n);
 
-                // Ïðîâåðêà ñòàòóñà îò äî÷åðíåãî ïðîöåññà ÷åðåç pipe2
+                // Ð¿Ñ€Ð¾Ð²ÐµÑ€ÐºÐ° ÑÑ‚Ð°Ñ‚ÑƒÑÐ° Ð¾Ñ‚ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ° Ñ‡ÐµÑ€ÐµÐ· pipe2
                 char status_buf[256];
                 fd_set readfds;
                 struct timeval timeout;
@@ -127,17 +126,17 @@ int main(int argc, char *argv[]) {
                             write(STDERR_FILENO, error_msg, sizeof(error_msg) - 1);
                             child_alive = 0;
                         }
-                        // Âûâîä äðóãèõ ñîîáùåíèé îò äî÷åðíåãî ïðîöåññà
+                        // Ð’Ñ‹Ð²Ð¾Ð´ Ð´Ñ€ÑƒÐ³Ð¸Ñ… ÑÐ¾Ð¾Ð±Ñ‰ÐµÐ½Ð¸Ð¹ Ð¾Ñ‚ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
                         write(STDERR_FILENO, status_buf, status_n);
                     }
                 }
             }
 
-            // Çàêðûòèå êàíàëîâ è îæèäàíèå çàâåðøåíèÿ äî÷åðíåãî ïðîöåññà
+            // Ð—Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ðµ ÐºÐ°Ð½Ð°Ð»Ð¾Ð² Ð¸ Ð¾Ð¶Ð¸Ð´Ð°Ð½Ð¸Ðµ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¸Ñ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
             close(parent_to_child[1]);
             close(child_to_parent[0]);
 
-            // Îæèäàíèå çàâåðøåíèÿ äî÷åðíåãî ïðîöåññà
+            // ÐžÐ¶Ð¸Ð´Ð°Ð½Ð¸Ðµ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¸Ñ Ð´Ð¾Ñ‡ÐµÑ€Ð½ÐµÐ³Ð¾ Ð¿Ñ€Ð¾Ñ†ÐµÑÑÐ°
             int status;
             wait(&status);
 

@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
     const char *filename = argv[1];
     
-    // Открытие файла для записи результатов
+    // РћС‚РєСЂС‹С‚РёРµ С„Р°Р№Р»Р° РґР»СЏ Р·Р°РїРёСЃРё СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
     int output_file = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
     if (output_file == -1) {
         const char msg[] = "Error: cannot open output file\n";
@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
     ssize_t n;
     size_t pos = 0;
 
-    // Запись заголовка в файл
     const char header[] = "Calculation Results:\n====================\n";
     write(output_file, header, sizeof(header) - 1);
 
@@ -37,11 +36,11 @@ int main(int argc, char *argv[]) {
         char *current_line = buf;
         char *line_end;
 
-        // Обработка каждой строки
+        // РћР±СЂР°Р±РѕС‚РєР° РєР°Р¶РґРѕР№ СЃС‚СЂРѕРєРё
         while ((line_end = strchr(current_line, '\n'))) {
             *line_end = '\0';
 
-            // Пропуск пустых строк
+            // РџСЂРѕРїСѓСЃРє РїСѓСЃС‚С‹С… СЃС‚СЂРѕРє
             if (strlen(current_line) == 0) {
                 current_line = line_end + 1;
                 continue;
@@ -52,10 +51,9 @@ int main(int argc, char *argv[]) {
             int division_by_zero = 0;
             int valid_input = 1;
             
-            // Парсинг чисел из строки
+            // РџР°СЂСЃРёРЅРі С‡РёСЃРµР» РёР· СЃС‚СЂРѕРєРё
             char *ptr = current_line;
             while (*ptr) {
-                // Пропуск пробелов
                 while (*ptr && isspace((unsigned char)*ptr)) {
                     ptr++;
                 }
@@ -63,14 +61,14 @@ int main(int argc, char *argv[]) {
                     break;
                 }
 
-                // Проверка на отрицательное число
+                // РџСЂРѕРІРµСЂРєР° РЅР° РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕ С‡РёСЃР»Рѕ
                 int is_negative = 0;
                 if (*ptr == '-') {
                     is_negative = 1;
                     ptr++;
                 }
 
-                // Парсинг целой части
+                // РџР°СЂСЃРёРЅРі С†РµР»РѕР№ С‡Р°СЃС‚Рё
                 float number = 0.0;
                 int digits_found = 0;
                 while (*ptr && isdigit((unsigned char)*ptr)) {
@@ -79,7 +77,7 @@ int main(int argc, char *argv[]) {
                     digits_found = 1;
                 }
 
-                // Парсинг дробной части
+                // РџР°СЂСЃРёРЅРі РґСЂРѕР±РЅРѕР№ С‡Р°СЃС‚Рё
                 if (*ptr == '.') {
                     ptr++;
                     float fraction = 0.1;
@@ -92,7 +90,6 @@ int main(int argc, char *argv[]) {
                 }
 
                 if (!digits_found) {
-                    // Пропуск некорректных символов
                     while (*ptr && !isspace((unsigned char)*ptr)) ptr++;
                     continue;
                 }
@@ -104,10 +101,10 @@ int main(int argc, char *argv[]) {
                 numbers_seen++;
 
                 if (numbers_seen == 1) {
-                    // Первое число - делимое
+                    // РџРµСЂРІРѕРµ С‡РёСЃР»Рѕ - РґРµР»РёРјРѕРµ
                     result = number;
                 } else {
-                    // Последующие числа - делители
+                    // РџРѕСЃР»РµРґСѓСЋС‰РёРµ С‡РёСЃР»Р° - РґРµР»РёС‚РµР»Рё
                     if (number == 0.0) {
                         division_by_zero = 1;
                         break;
@@ -115,7 +112,6 @@ int main(int argc, char *argv[]) {
                     result /= number;
                 }
 
-                // Пропуск оставшихся не-пробельных символов
                 while (*ptr && !isspace((unsigned char)*ptr)) {
                     valid_input = 0;
                     break;
@@ -125,7 +121,7 @@ int main(int argc, char *argv[]) {
                 }
             }
 
-            // Обработка результатов вычислений
+            // РћР±СЂР°Р±РѕС‚РєР° РїРѕР»СѓС‡РёРІС€РёС…СЃСЏ РІС‹С‡РёСЃР»РµРЅРёР№
             if (!valid_input) {
                 const char msg[] = "Error: invalid input format\n";
                 write(STDERR_FILENO, msg, sizeof(msg) - 1);
@@ -143,7 +139,7 @@ int main(int argc, char *argv[]) {
                                  "Input: \"%s\" -> Error: division by zero\n", current_line);
                 write(output_file, error_entry, len);
                 
-                // Завершение работы при делении на ноль
+                // Р•СЃР»Рё РґРµР»РµРЅРёРµ РЅР° РЅРѕР»СЊ, С‚Рѕ Р·Р°РІРµСЂС€Р°РµРј СЂР°Р±РѕС‚Сѓ
                 close(output_file);
                 exit(EXIT_FAILURE);
             } else if (numbers_seen < 2) {
@@ -155,7 +151,7 @@ int main(int argc, char *argv[]) {
                                  "Input: \"%s\" -> Error: not enough numbers\n", current_line);
                 write(output_file, error_entry, len);
             } else {
-                // Успешное вычисление - запись результата в файл
+                // Р—Р°РїРёСЃСЊ СЂРµР·СѓР»СЊС‚Р°С‚Р° РІ С„Р°Р№Р» РїСЂРё СѓСЃРїРµС€РЅРѕРј РІС‹С‡РёСЃР»РµРЅРёРё
                 char result_entry[128];
                 int len = snprintf(result_entry, sizeof(result_entry), 
                                  "Input: \"%s\" -> Result: %.6f\n", current_line, result);
@@ -168,12 +164,11 @@ int main(int argc, char *argv[]) {
             current_line = line_end + 1;
         }
 
-        // Сохранение необработанной части буфера
         pos = strlen(current_line);
         memmove(buf, current_line, pos);
     }
 
-    // Запись завершающего сообщения в файл
+    // Р—Р°РїРёСЃСЊ Р·Р°РІРµСЂС€Р°СЋС‰РµРіРѕ СЃРѕРѕР±С‰РµРЅРёСЏ РІ С„Р°Р№Р»
     const char footer[] = "\nEnd of calculations.\n";
     write(output_file, footer, sizeof(footer) - 1);
     
