@@ -1,0 +1,6 @@
+Calculation Results:
+====================
+Input: "100 5 2" -> Result: 10.000000
+Input: "230 5 6 7" -> Result: 1.095238
+
+End of calculations.
