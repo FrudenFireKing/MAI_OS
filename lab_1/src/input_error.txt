@@ -1,0 +1,6 @@
+Calculation Results:
+====================
+Input: "12a 3 4" -> Error: invalid format
+Input: "aaa aa b c" -> Error: not enough numbers
+Input: "10 a" -> Error: not enough numbers
+Input: "45 0" -> Error: division by zero

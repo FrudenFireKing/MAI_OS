@@ -1,0 +1,9 @@
+Calculation Results:
+====================
+Input: "10 5 2" -> Result: 1.000000
+Input: "450 9 10 5" -> Result: 1.000000
+Input: "347 13" -> Result: 26.692308
+Input: "1024 2 2 2 4" -> Result: 32.000000
+Input: "65 13 5" -> Result: 1.000000
+
+End of calculations.

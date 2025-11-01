@@ -1,0 +1,5 @@
+Calculation Results:
+====================
+Input: "100 2 5" -> Result: 10.000000
+Input: "2 5" -> Result: 0.400000
+Input: "10 0" -> Error: division by zero
